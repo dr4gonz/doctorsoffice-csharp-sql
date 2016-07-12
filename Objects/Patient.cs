@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
-namespace DoctorOffice.Objects
+namespace DoctorOffice
 {
   public class Patient
   {
@@ -13,6 +13,7 @@ namespace DoctorOffice.Objects
 
     public Patient(string name, DateTime? birthday, int doctor_id, int id = 0)
     {
+      _id = id;
       _name = name;
       _birthday = birthday;
       _doctor_id = doctor_id;
@@ -34,10 +35,6 @@ namespace DoctorOffice.Objects
     {
       return _birthday;
     }
-    public void SetId(int newId)
-    {
-      _id = newId;
-    }
     public static List<Patient> GetAll()
     {
       List<Patient> allPatients = new List<Patient> {};
@@ -56,7 +53,7 @@ namespace DoctorOffice.Objects
         int patientDoctorId = rdr.GetInt32(2);
         int patientId = rdr.GetInt32(3);
         Patient newPatient = new Patient(patientName, patientBirthday, patientDoctorId, patientId);
-        allPatients.Add(newPatient)
+        allPatients.Add(newPatient);
       }
 
       if (rdr != null)
@@ -117,7 +114,7 @@ namespace DoctorOffice.Objects
       conn.Open();
 
       SqlCommand cmd = new SqlCommand("SELECT * FROM patients WHERE id = @PatientId;", conn);
-      sqlParameter patientId = new SqlParameter();
+      SqlParameter patientIdParameter = new SqlParameter();
       patientIdParameter.ParameterName = "@PatientId";
       patientIdParameter.Value = id.ToString();
       cmd.Parameters.Add(patientIdParameter);
@@ -147,6 +144,7 @@ namespace DoctorOffice.Objects
       }
       return foundPatient;
     }
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();
@@ -154,6 +152,7 @@ namespace DoctorOffice.Objects
       SqlCommand cmd = new SqlCommand("DELETE FROM patients;", conn);
       cmd.ExecuteNonQuery();
     }
+
     public override bool Equals(System.Object otherPatient)
     {
       if (!(otherPatient is Patient))
@@ -167,8 +166,14 @@ namespace DoctorOffice.Objects
         bool birthdayEquality = (this.GetBirthday() == newPatient.GetBirthday());
         bool doctorIdEquality = (this.GetDoctorId() == newPatient.GetDoctorId());
         bool idEquality = (this.GetId() == newPatient.GetId());
+        return (nameEquality && birthdayEquality && doctorIdEquality && idEquality);
       }
     }
-    
+
+    public string PatientToString()
+    {
+      return ("\nName :"+_name+"\nBirthday: "+_birthday+"\nid: "+_id);
+    }
+
   }
 }

@@ -1,5 +1,4 @@
 using Nancy;
-using DoctorOffice.Objects;
 
 namespace DoctorOffice
 {
@@ -7,7 +6,7 @@ namespace DoctorOffice
   {
     public HomeModule()
     {
-      Get["/"] View["index.cshtml"];
+      Get["/"] = _ => View["index.cshtml"];
     }
   }
 
